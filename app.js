@@ -3,43 +3,37 @@ const bodyParser = require("body-parser");
 
 const app = express();
 
+let items = ["Buy Food", "Cook Food", "Eat Food"];
+
 app.set('view engine', 'ejs');
 
-app.get("/", function(req, res) {
-    // res.send("Hello");
-    var today = new Date();
-    var currentDay = today.getDay();
-    var day = "";
+app.use(bodyParser.urlencoded({extended: true}));
 
-    switch (currentDay) {
-        case 0:
-            day = "Sunday"
-            break;
-        case 1:
-            day = "Monday"
-            break;        
-        case 2:
-            day = "Tuesday"
-            break;
-        case 3:
-            day = "Wednsday"
-            break;
-        case 4:
-            day = "Thursday"
-            break;
-        case 5:
-            day = "Friday"
-            break;        
-        case 6:
-            day = "Saturday"
-            break;    
-        default:
-            console.log("Error: current day is equel to : " + currentDay);
-            break;
-    }
+app.get("/", function(req, res) {
+
+    let today = new Date();
+
+    let options = {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+    };
+
+    let day = today.toLocaleDateString("en-US", options);
     
-    res.render("list", {kindOfDay: day});
+    res.render("list", {kindOfDay: day, newListItems: items});
 });
+
+app.post("/", function(req, res) {
+    let item = req.body.newItem;
+
+    items.push(item);
+
+    res.redirect("/");
+
+    console.log(item);
+});
+
 
 
 
